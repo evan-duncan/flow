@@ -1,5 +1,10 @@
 {
   "name": "flow",
   "description": "Personal workflow skills for Claude Code.",
-  "author": { "name": "Evan Duncan" }
+  "author": {
+    "name": "Evan Duncan"
+  },
+  "skills": [
+    "./.agents/skills"
+  ]
 }
