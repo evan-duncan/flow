@@ -19,6 +19,13 @@ existing architecture docs instead of re-explaining them. For units with an
 INTENT.md, link to its Decisions rows instead of restating them; keep only
 delivery choices here (why the cuts fall where they do).}}
 
+## Sketch
+
+{{Omit this section if there is no sketch. Otherwise: link each sketch PNG
+(`sketches/<name>.png`), then paste the fat-marker read-back the user
+confirmed: parts, connections, constraints, and how each question was
+answered. Later sections refer to parts by these names.}}
+
 ## Constraints & assumptions
 
 - {{...}}
@@ -38,6 +45,7 @@ targets it as its PR base.
 - **Branch:** `{{layer_1_branch}}` (off `{{trunk}}`)
 - **PR base:** `{{trunk}}`
 - **Intent:** {{units whose INTENT.md this layer edits or creates, or "none"}}
+- **Sketch parts:** {{sketch parts this layer delivers, by name, or "none"}}
 - **Scope:**
   - Planning doc
   - {{bullet}}
@@ -50,6 +58,7 @@ targets it as its PR base.
 - **Branch:** `{{layer_2_branch}}` (off `{{layer_1_branch}}`)
 - **PR base:** `{{layer_1_branch}}`
 - **Intent:** {{units whose INTENT.md this layer edits or creates, or "none"}}
+- **Sketch parts:** {{sketch parts this layer delivers, by name, or "none"}}
 - **Scope:**
   - {{bullet}}
 - **Done when:**
@@ -67,4 +76,4 @@ targets it as its PR base.
 
 ## Out of scope
 
-- {{...}}
+- {{...}} {{Include every sketch part that no layer delivers.}}

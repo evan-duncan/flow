@@ -33,7 +33,10 @@ Files (paths relative to this skill's directory):
    tools are connected), a spec doc, or a prompt. Do not create the parent
    ticket. The user provides it.
 2. **Design with the user** before cutting layers. Don't write layers until
-   you and the user agree on the approach and the cut points.
+   you and the user agree on the approach and the cut points. If the user
+   has a sketch, or the work has a shape worth drawing (a screen, a flow,
+   how components connect), use the fat-marker skill first and plan from
+   its confirmed read-back.
 3. **Cut the stack.** Each layer must:
    - build and pass tests on its own, on top of the layers below it;
    - be reviewable in one sitting (aim for a few hundred lines of diff);
@@ -43,11 +46,14 @@ Files (paths relative to this skill's directory):
    API, then UI. Or a refactor that changes no behavior, then the feature on
    top. Layer 1 holds the planning doc, plus a small amount of foundation
    code if that makes sense. If the repo has `INTENT.md` files, also follow
-   [With intent docs](#with-intent-docs).
+   [With intent docs](#with-intent-docs). With a sketch, each layer names
+   the sketch parts it delivers, and every part is in some layer or out of
+   scope.
 4. **Write the planning doc** from `templates/planning-doc.md`. Use the
    repo's plan directory if it has one, otherwise `docs/plans/`. Name it
    `YYYY-MM-DD-<slug>.md`. Write one section per layer, in stack order.
-   Don't commit it yet; it lands on layer 1's branch.
+   Don't commit it yet; it lands on layer 1's branch, along with any
+   sketch files it links.
 5. **Tracker sub-tasks (optional).** If the user named a ticket or a
    tracker (Jira, Linear, GitHub Issues, …), create one sub-task per layer,
    in stack order, under the parent, using the connected tracker tools. Ask
@@ -65,8 +71,8 @@ Files (paths relative to this skill's directory):
 4. Run `stack.sh start <new-branch> [<parent-branch>]`. It refuses a dirty
    tree, an invalid name, a missing parent, or an existing branch. It
    records the parent in git config (`branch.<name>.stackParent`).
-5. **Layer 1 only:** commit the planning doc as the first commit
-   (`docs: plan <work> stack`).
+5. **Layer 1 only:** commit the planning doc, and its sketch files if
+   any, as the first commit (`docs: plan <work> stack`).
 6. If there is a tracker, move the sub-task to its in-progress state.
 7. Tell the user what the layer's next concrete commit should be.
 
