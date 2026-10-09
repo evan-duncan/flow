@@ -1,0 +1,10 @@
+frame 1 "Customer statement" at 0,0 760x560
+rectangle 2 "customer name + statement date" at 30,30 700x80 in 1
+rectangle 3 "invoices: number | due | amount | late fee" at 30,140 700x260 in 1
+rectangle 4 "total owed" at 480,430 250x90 in 1
+rectangle 5 "Download" at 30,440 180x70 in 1
+ink 6 at 440,402 335x146 in 1
+ink 7 at 230,445 20x45 in 1
+rectangle 8 "customer list" at -420,40 280x400
+arrow 9 from 8 to 2 "click customer"
+note 10 "late fee as of statement date, not today" at 749,227 200x200

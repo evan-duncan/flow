@@ -1,0 +1,25 @@
+name: fat-marker app
+
+on:
+  push:
+    paths:
+      - ".agents/skills/fat-marker/app/**"
+      - ".github/workflows/fat-marker-app.yml"
+  pull_request:
+    paths:
+      - ".agents/skills/fat-marker/app/**"
+      - ".github/workflows/fat-marker-app.yml"
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test .agents/skills/fat-marker/app/serve.test.mjs

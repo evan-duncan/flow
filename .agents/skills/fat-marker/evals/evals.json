@@ -1,0 +1,62 @@
+{
+  "skill_name": "fat-marker",
+  "evals": [
+    {
+      "id": 1,
+      "name": "read-back-from-canvas",
+      "prompt": "Just drew the statement screen in the fat marker canvas and hit send. Here's what came back:\n\n# docs/plans/sketches/statement.png\nframe 1 \"Customer statement\" at 0,0 760x560\nrectangle 2 \"customer name + statement date\" at 30,30 700x80 in 1\nrectangle 3 \"invoices: number | due | amount | late fee\" at 30,140 700x260 in 1\nrectangle 4 \"total owed\" at 480,430 250x90 in 1\nrectangle 5 \"Download\" at 30,440 180x70 in 1\nink 6 at 440,402 335x146 in 1\nink 7 at 230,445 20x45 in 1\nrectangle 8 \"customer list\" at -420,40 280x400\narrow 9 from 8 to 2 \"click customer\"\nnote 10 \"late fee as of statement date, not today\" at 749,227 200x200\n\nThis is for the monthly customer statement work. Let's plan it as stacked PRs.",
+      "expected_output": "The agent does not plan yet. It gives a read-back in the skill's shape: classifies it as a screen, lists every labeled part by its label, reads the arrow as navigating from the customer list to the statement, carries the note as a constraint, and asks about both ink marks after looking at the PNG (the loop around total owed, the question mark next to Download). It asks the user to confirm before planning, and nothing is written.",
+      "files": [
+        "../execution-plan/evals/files/invoices-base",
+        "evals/files/statement-sketch"
+      ],
+      "assertions": [
+        "The response classifies the sketch as a screen (or screen plus flow)",
+        "Every labeled part appears by its label: Customer statement, customer name + statement date, the invoices table, total owed, Download, customer list",
+        "The arrow is read as navigation or an action: clicking a customer in the list opens their statement",
+        "The note (late fee as of the statement date) is listed as a constraint, not as a part to build",
+        "The response asks about the ink near Download and says it looks like a question mark, which shows the agent read the PNG",
+        "The response asks about, or offers a reading of, the loop around total owed (emphasis or grouping), rather than ignoring it",
+        "The response gives no pixel sizes, colors, fonts or exact positions as requirements",
+        "No planning doc is written and no file under src/ is changed: the agent stops for confirmation even though the user asked for a plan"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "plan-from-confirmed-sketch",
+      "prompt": "Plan the monthly customer statement as stacked PRs, using my sketch at docs/plans/sketches/statement.png (the .tldr is beside it). You already read it back to me and I confirmed it: it's a screen; clicking a customer in the customer list opens their statement; the statement has a header (customer name + statement date), the invoices table (number, due, amount, late fee), and total owed; late fees are computed as of the statement date, not today. The question mark by Download means not now. The circle around total owed means it's the number people care about most. Don't write code yet.",
+      "expected_output": "A planning doc under docs/plans/ with a Sketch section that links sketches/statement.png and restates the confirmed read-back. Every layer has a Sketch parts line. Every part is delivered by a layer, and Download is under Out of scope. No layer invents UI the sketch doesn't show.",
+      "files": [
+        "../execution-plan/evals/files/invoices-base",
+        "evals/files/statement-sketch"
+      ],
+      "assertions": [
+        "A planning doc exists at docs/plans/YYYY-MM-DD-<slug>.md",
+        "The planning doc has a Sketch section that links sketches/statement.png",
+        "Every layer section has a Sketch parts line",
+        "customer list, the statement header, the invoices table and total owed are each named in some layer's Sketch parts",
+        "Download is listed under Out of scope and in no layer's Sketch parts",
+        "The late-fee-as-of-statement-date constraint appears in the plan",
+        "No layer adds UI the sketch doesn't show (search, filters, pagination, charts, email) unless it is raised as an open question",
+        "Layer 1 includes the planning doc and the sketch files",
+        "No file under src/ is changed"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "read-back-from-image",
+      "prompt": "Here's a photo of the whiteboard sketch for the customer statement screen: docs/plans/sketches/statement.png. No canvas, just work from the image. Write it up so we can plan from it.",
+      "expected_output": "The agent reads the image directly, writes an outline in the skill's line format (kind, number, quoted label, containment, arrows from/to), and gives the read-back with questions about the unlabeled marks. It does not start planning.",
+      "files": [
+        "../execution-plan/evals/files/invoices-base",
+        "evals/files/statement-sketch"
+      ],
+      "assertions": [
+        "The response includes an outline in the skill's format: one line per mark, with labels quoted and arrows written `from` / `to`",
+        "The outline or read-back names customer list, Customer statement, customer name + statement date, the invoices table, total owed, Download, and the late-fee note",
+        "The read-back asks about at least one unlabeled mark (the question mark by Download or the loop around total owed)",
+        "The response asks the user to confirm before planning, and no planning doc is written"
+      ]
+    }
+  ]
+}

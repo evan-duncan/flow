@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fat marker</title>
+    <!-- Versions are pinned. Bump tldraw and react together, then re-run the
+         smoke check in the fat-marker skill. -->
+    <link rel="stylesheet" href="https://esm.sh/tldraw@5.5.2/tldraw.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.2.1",
+          "react/": "https://esm.sh/react@19.2.1/",
+          "react-dom": "https://esm.sh/react-dom@19.2.1",
+          "react-dom/": "https://esm.sh/react-dom@19.2.1/",
+          "tldraw": "https://esm.sh/tldraw@5.5.2?external=react,react-dom"
+        }
+      }
+    </script>
+    <style>
+      html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
+      #root { position: fixed; inset: 0; }
+      #send {
+        position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 1000;
+        padding: 8px 16px; font: 600 14px system-ui, sans-serif; border: 0; border-radius: 8px;
+        background: #1d4ed8; color: #fff; cursor: pointer; box-shadow: 0 1px 4px #0004;
+      }
+      #send:disabled { background: #64748b; cursor: default; }
+      #done { position: fixed; inset: 0; z-index: 2000; display: none; place-items: center;
+        background: #fffe; font: 600 20px system-ui, sans-serif; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <button id="send" disabled>Send to agent</button>
+    <div id="done">Sent. The agent has your sketch; you can close this tab.</div>
+    <script type="module">
+      import { createElement } from 'react'
+      import { createRoot } from 'react-dom/client'
+      import { Tldraw, getSnapshot, loadSnapshot } from 'tldraw'
+
+      const token = new URLSearchParams(location.search).get('t')
+      const button = document.getElementById('send')
+      let editor
+
+      // One line per shape, in z-order. Every shape gets a number so the
+      // read-back can refer to it; arrows name their bound ends by number.
+      // Positions and sizes are page coordinates, rounded: they locate a mark
+      // in the PNG and say what contains what, nothing more.
+      function outline(editor) {
+        const shapes = editor.getCurrentPageShapesSorted()
+        const num = new Map(shapes.map((s, i) => [s.id, i + 1]))
+        const r = Math.round
+        const text = (s) => {
+          const t = editor.getShapeUtil(s).getText?.(s)?.trim()
+          return t ? ` ${JSON.stringify(t)}` : ''
+        }
+        const box = (s) => {
+          const b = editor.getShapePageBounds(s)
+          return b ? ` at ${r(b.x)},${r(b.y)} ${r(b.w)}x${r(b.h)}` : ''
+        }
+        const inside = (s) => (num.has(s.parentId) ? ` in ${num.get(s.parentId)}` : '')
+        const end = (b, fallback) => (b ? num.get(b.toId) : `(${r(fallback.x)},${r(fallback.y)})`)
+
+        return shapes
+          .map((s) => {
+            const n = num.get(s.id)
+            switch (s.type) {
+              case 'arrow': {
+                const bs = editor.getBindingsFromShape(s, 'arrow')
+                const at = (t) => bs.find((b) => b.props.terminal === t)
+                const pt = (p) => editor.getShapePageTransform(s).applyToPoint(p)
+                return `arrow ${n} from ${end(at('start'), pt(s.props.start))} to ${end(at('end'), pt(s.props.end))}${text(s)}${inside(s)}`
+              }
+              case 'geo':
+                return `${s.props.geo} ${n}${text(s)}${box(s)}${inside(s)}`
+              case 'draw':
+              case 'highlight':
+              case 'line':
+                return `ink ${n}${box(s)}${inside(s)}`
+              default:
+                return `${s.type} ${n}${text(s)}${box(s)}${inside(s)}`
+            }
+          })
+          .join('\n')
+      }
+
+      function blobToDataURL(blob) {
+        return new Promise((resolve) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result)
+          reader.readAsDataURL(blob)
+        })
+      }
+
+      button.onclick = async () => {
+        const ids = [...editor.getCurrentPageShapeIds()]
+        if (!ids.length) return alert('Draw something first.')
+        button.disabled = true
+        button.textContent = 'Sending…'
+        try {
+          const { blob } = await editor.toImage(ids, { format: 'png', background: true, padding: 32 })
+          const res = await fetch(`/sketch?t=${token}`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              snapshot: getSnapshot(editor.store),
+              png: await blobToDataURL(blob),
+              outline: outline(editor),
+            }),
+          })
+          if (!res.ok) throw new Error(await res.text())
+          document.getElementById('done').style.display = 'grid'
+        } catch (err) {
+          alert(`Send failed: ${err.message}`)
+          button.disabled = false
+          button.textContent = 'Send to agent'
+        }
+      }
+
+      async function onMount(e) {
+        editor = window.editor = e // window.editor: for driving the canvas from devtools
+        const res = await fetch(`/snapshot?t=${token}`)
+        if (res.ok) loadSnapshot(editor.store, await res.json())
+        button.disabled = false
+      }
+
+      createRoot(document.getElementById('root')).render(createElement(Tldraw, { onMount }))
+    </script>
+  </body>
+</html>
