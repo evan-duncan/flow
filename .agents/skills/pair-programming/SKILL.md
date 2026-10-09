@@ -54,7 +54,12 @@ Files: `assets/pair-brief.md` (send to each agent) and `assets/personalities.md`
    - `REPO_RULES`: a few lines of conventions the agents must follow,
      taken from CLAUDE.md / AGENTS.md and the codebase (package
      manager, layering rules, style rules). If CLAUDE.md or AGENTS.md
-     covers them, write its name instead.
+     covers them, write its name instead. If the user has no documented
+     coding standards, use the
+     [XP coding standard](https://en.wikipedia.org/wiki/Extreme_programming_practices#Coding_standard):
+     write code that is self-documenting to the furthest degree
+     possible. This reduces the need for code comments, which can lose
+     synchrony with the code over time.
 
    If you cannot find a test command that runs single files, ask the
    user before you spawn anything.
