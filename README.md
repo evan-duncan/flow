@@ -8,6 +8,8 @@ Personal Claude Code skills, packaged as a plugin.
 /plugin install flow --marketplace evan-duncan/flow
 ```
 
+Codex: the plugin manifest is `.codex-plugin/plugin.json`. Or skip the plugin and copy `.agents/skills/*` into `~/.agents/skills/`. Codex, and other agents that support the [Agent Skills](https://agentskills.io) format, discover skills there. `pair-programming` uses Claude Code's subagent tools, so it only works in Claude Code.
+
 ## Skills
 
 - `pair-programming`: two subagents (pragmatist and skeptic) pair through ping-pong TDD while Claude coaches, runs the tests, and commits.

@@ -1,10 +1,10 @@
 {
   "name": "flow",
+  "version": "0.1.0",
   "description": "Personal workflow skills for coding agents.",
   "author": {
     "name": "Evan Duncan"
   },
-  "skills": [
-    "./.agents/skills"
-  ]
+  "license": "Apache-2.0",
+  "skills": "./.agents/skills/"
 }
