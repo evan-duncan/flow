@@ -42,7 +42,8 @@ Files (paths relative to this skill's directory):
    Good cuts follow dependencies. Examples: schema, then domain logic, then
    API, then UI. Or a refactor that changes no behavior, then the feature on
    top. Layer 1 holds the planning doc, plus a small amount of foundation
-   code if that makes sense.
+   code if that makes sense. If the repo has `INTENT.md` files, also follow
+   [With intent docs](#with-intent-docs).
 4. **Write the planning doc** from `templates/planning-doc.md`. Use the
    repo's plan directory if it has one, otherwise `docs/plans/`. Name it
    `YYYY-MM-DD-<slug>.md`. Write one section per layer, in stack order.
@@ -98,6 +99,41 @@ Commits with a body that explains why.
   `stack.sh` call.
 - **The plan changed:** update the planning doc in the current layer's PR.
   Don't let the plan and the stack drift apart.
+
+## With intent docs
+
+When the work touches units that have an `INTENT.md` (see the intent-docs
+skill), or creates new ones, the two docs split the job:
+
+- **`INTENT.md` owns behavior.** It records what a unit does and the
+  decisions behind that, and it lasts.
+- **The planning doc owns delivery.** It records cut points, layer order
+  and sequencing, and it describes one change.
+
+If the two disagree about behavior, `INTENT.md` wins.
+
+Rules:
+
+- **One layer carries the whole behavior change.** For each unit whose
+  behavior a layer changes, the layer includes the `INTENT.md` edit with
+  its Decisions row, the contract test, and the code. Never cut an
+  intent-only or test-only layer. It would split one change across PRs
+  and leave a layer red.
+- **A new unit lands in one layer.** That layer holds the `INTENT.md`, the
+  public surface, the contract test and the code. If that is too big to
+  review, give the unit less behavior and add the rest in later layers.
+  Each later layer brings its own intent edit.
+- **Write behavior decisions into `INTENT.md`, not the plan.** Write them
+  in the layer that makes them. The plan's Approach links to those
+  Decisions rows instead of restating them. The plan's own decisions are
+  delivery choices only, such as why the cuts fall where they do.
+- **Resolve open questions before their layer ships.** A plan Open
+  question becomes one of two things: a Decisions row, or an **Undecided**
+  entry if rebuilds may answer it either way. Don't leave it open in the
+  plan.
+- **Use contract tests as "Done when".** For a layer that touches a unit,
+  "Done when" names the contract tests that must pass, from the unit's
+  Acceptance list. Don't restate the behavior rules.
 
 ## Scripts
 

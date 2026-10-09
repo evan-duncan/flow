@@ -20,6 +20,15 @@ AGENTS.md / CONTRIBUTING.md.
 - [ ] Tests were added or updated for every behavior change.
 - [ ] The layer is green on its own, on top of its parent layer.
 
+### Intent docs (skip if no unit with an INTENT.md is touched)
+
+- [ ] Every behavior change has its `INTENT.md` edit and Decisions row in
+      this same layer.
+- [ ] A contract test fails on the old behavior and passes now.
+- [ ] Open questions this layer settles are now Decisions or Undecided
+      entries, not open in the plan.
+- [ ] A refactor-only layer leaves `INTENT.md` and contract tests unchanged.
+
 ### Stack hygiene
 
 - [ ] Branch is up to date with its parent layer (`stack.sh restack` if not).

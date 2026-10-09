@@ -15,7 +15,9 @@ layers map 1:1 to its sub-tasks. Delete this comment when filling it in.
 ## Approach
 
 {{Short narrative of the design decision and alternatives considered. Link to
-existing architecture docs instead of re-explaining them.}}
+existing architecture docs instead of re-explaining them. For units with an
+INTENT.md, link to its Decisions rows instead of restating them; keep only
+delivery choices here (why the cuts fall where they do).}}
 
 ## Constraints & assumptions
 
@@ -35,17 +37,19 @@ targets it as its PR base.
 - **Sub-task:** {{layer_1_id or "n/a"}}
 - **Branch:** `{{layer_1_branch}}` (off `{{trunk}}`)
 - **PR base:** `{{trunk}}`
+- **Intent:** {{units whose INTENT.md this layer edits or creates, or "none"}}
 - **Scope:**
   - Planning doc
   - {{bullet}}
 - **Done when:**
-  - {{acceptance bullet}}
+  - {{acceptance bullet, or the contract tests that must pass}}
 
 ### Layer 2 — {{layer_2_summary}}
 
 - **Sub-task:** {{layer_2_id or "n/a"}}
 - **Branch:** `{{layer_2_branch}}` (off `{{layer_1_branch}}`)
 - **PR base:** `{{layer_1_branch}}`
+- **Intent:** {{units whose INTENT.md this layer edits or creates, or "none"}}
 - **Scope:**
   - {{bullet}}
 - **Done when:**
