@@ -1,0 +1,66 @@
+{
+  "skill_name": "intent-docs",
+  "evals": [
+    {
+      "id": 1,
+      "name": "write-from-code",
+      "prompt": "The billing team keeps asking what our invoice late-fee rules actually are. Can you write intent docs for src/billing/invoices so the code could be regenerated from them?",
+      "expected_output": "An INTENT.md and a .feature file in src/billing/invoices/, plus a contract test beside the directory that quotes every scenario title. The docs capture the existing behavior: positive whole-cent amounts, a 3-day grace period, a flat 2500-cent fee, paid invoices judged as of payment, and double payment refused.",
+      "files": ["evals/files/invoices-base"],
+      "assertions": [
+        "`bash <skill-dir>/evals/check-intent-doc.sh src/billing/invoices <contract test files>`, run from the output repo, exits 0",
+        "A contract test file exists outside src/billing/invoices/ and imports nothing from the unit except src/billing/invoices.js",
+        "`npm test` passes",
+        "Scenarios state the 3-day grace period boundary (no fee on day 3, fee on day 4) with concrete dates",
+        "Scenarios state the flat 2500-cent fee, that paying on time never produces a fee later, and that paying twice fails with `AlreadyPaid`",
+        "Scenario steps describe what a caller observes; no step names internal files, internal functions, or constants such as GRACE_DAYS",
+        "The Public surface section names src/billing/invoices.js and describes each export",
+        "Purpose explains the problem in user terms and does not restate the scenarios"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "change-behavior",
+      "prompt": "Finance wants late fees to be 5% of the invoice amount instead of the flat $25, but never less than $10. Can you make that change?",
+      "expected_output": "In one change: a new Decisions row for the percentage fee, scenarios tagged with it, contract tests quoting those scenarios that fail on the old code, and the code change. No scenario still asserts the flat fee.",
+      "files": ["evals/files/invoices-intent"],
+      "assertions": [
+        "INTENT.md has a new Decisions row with an id not used before (decision-6 or higher) recording the 5% fee with a 1000-cent minimum, a rejected alternative, and why",
+        "decision-3's id is not reused for the new rule",
+        "At least one scenario tagged with the new decision id shows a percentage fee with a concrete amount, and one shows the 1000-cent minimum applying",
+        "No scenario still asserts a flat 2500-cent fee",
+        "`bash <skill-dir>/evals/check-intent-doc.sh src/billing/invoices src/billing/invoices.contract.test.js`, run from the output repo, exits 0",
+        "`npm test` passes",
+        "The new contract tests fail when src/billing/invoices/fees.js is replaced with the fixture's original version"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "refactor-leaves-intent",
+      "prompt": "fees.js in the invoices module is getting messy. Pull the days-late calculation out into its own file. Don't change any behavior.",
+      "expected_output": "The days-late logic moves to a new disposable module. INTENT.md, the .feature file and the contract test are untouched, and all tests pass.",
+      "files": ["evals/files/invoices-intent"],
+      "assertions": [
+        "src/billing/invoices/INTENT.md is byte-identical to the fixture",
+        "src/billing/invoices/invoices.feature is byte-identical to the fixture",
+        "src/billing/invoices.contract.test.js is byte-identical to the fixture",
+        "The days-late calculation lives in a new file under src/billing/invoices/",
+        "`npm test` passes"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "no-bdd-framework",
+      "prompt": "can we make the .feature files in src/billing/invoices actually run as tests? like wire them up so CI executes the scenarios",
+      "expected_output": "The agent declines to add a BDD framework and explains that scenarios are a contract checked by contract tests in the repo's own runner, pointing to the coverage check. It may improve the contract tests, but adds no framework or step definitions.",
+      "files": ["evals/files/invoices-intent"],
+      "assertions": [
+        "package.json gains no BDD dependency (cucumber, @cucumber/*, jest-cucumber, or similar)",
+        "No step-definition files are created",
+        "The response explains that the scenarios are checked by contract tests in the repo's normal test runner",
+        "The response mentions the coverage check that every scenario title is quoted by a contract test",
+        "`bash <skill-dir>/evals/check-intent-doc.sh src/billing/invoices src/billing/invoices.contract.test.js`, run from the output repo, exits 0"
+      ]
+    }
+  ]
+}
