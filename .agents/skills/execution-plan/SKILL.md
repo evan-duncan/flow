@@ -105,22 +105,23 @@ Commits with a body that explains why.
 When the work touches units that have an `INTENT.md` (see the intent-docs
 skill), or creates new ones, the two docs split the job:
 
-- **`INTENT.md` owns behavior.** It records what a unit does and the
-  decisions behind that, and it lasts.
+- **The intent doc owns behavior.** `INTENT.md` and its `.feature`
+  scenarios record what a unit does and the decisions behind that, and
+  they last.
 - **The planning doc owns delivery.** It records cut points, layer order
   and sequencing, and it describes one change.
 
-If the two disagree about behavior, `INTENT.md` wins.
+If the two disagree about behavior, the intent doc wins.
 
 Rules:
 
 - **One layer carries the whole behavior change.** For each unit whose
-  behavior a layer changes, the layer includes the `INTENT.md` edit with
-  its Decisions row, the contract test, and the code. Never cut an
-  intent-only or test-only layer. It would split one change across PRs
+  behavior a layer changes, the layer includes the Decisions row, the
+  scenario, the contract test, and the code. Never cut an intent-only or
+  test-only layer. It would split one change across PRs
   and leave a layer red.
-- **A new unit lands in one layer.** That layer holds the `INTENT.md`, the
-  public surface, the contract test and the code. If that is too big to
+- **A new unit lands in one layer.** That layer holds the `INTENT.md`, its
+  scenarios, the public surface, the contract tests and the code. If that is too big to
   review, give the unit less behavior and add the rest in later layers.
   Each later layer brings its own intent edit.
 - **Write behavior decisions into `INTENT.md`, not the plan.** Write them
@@ -131,9 +132,9 @@ Rules:
   question becomes one of two things: a Decisions row, or an **Undecided**
   entry if rebuilds may answer it either way. Don't leave it open in the
   plan.
-- **Use contract tests as "Done when".** For a layer that touches a unit,
-  "Done when" names the contract tests that must pass, from the unit's
-  Acceptance list. Don't restate the behavior rules.
+- **Use scenarios as "Done when".** For a layer that touches a unit,
+  "Done when" lists the titles of the scenarios that must pass. Don't
+  restate them.
 
 ## Scripts
 

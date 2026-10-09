@@ -42,7 +42,7 @@ targets it as its PR base.
   - Planning doc
   - {{bullet}}
 - **Done when:**
-  - {{acceptance bullet, or the contract tests that must pass}}
+  - {{acceptance bullet, or the title of a scenario that must pass}}
 
 ### Layer 2 — {{layer_2_summary}}
 

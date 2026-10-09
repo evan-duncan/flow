@@ -22,12 +22,15 @@ AGENTS.md / CONTRIBUTING.md.
 
 ### Intent docs (skip if no unit with an INTENT.md is touched)
 
-- [ ] Every behavior change has its `INTENT.md` edit and Decisions row in
-      this same layer.
-- [ ] A contract test fails on the old behavior and passes now.
+- [ ] Every behavior change has its Decisions row and a scenario tagged
+      with that decision's id, in this same layer.
+- [ ] Each new or changed scenario has a contract test that quotes its
+      title, failed on the old behavior, and passes now.
+- [ ] The intent-docs coverage check reports no uncovered scenarios.
 - [ ] Open questions this layer settles are now Decisions or Undecided
       entries, not open in the plan.
-- [ ] A refactor-only layer leaves `INTENT.md` and contract tests unchanged.
+- [ ] A refactor-only layer leaves `INTENT.md`, scenarios and contract
+      tests unchanged.
 
 ### Stack hygiene
 
