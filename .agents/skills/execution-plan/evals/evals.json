@@ -6,14 +6,17 @@
       "name": "plan-with-intent-docs",
       "prompt": "I want to add partial payments to invoices: customers can pay in installments, and the late fee should only apply to the unpaid balance. Plan it out as a stack of PRs. Don't write any code yet.",
       "expected_output": "A planning doc under docs/plans/ with ordered layers. It notices that partial payments is a non-goal in the invoices INTENT.md, so the first behavior layer must change the intent doc. Every behavior layer carries its Decisions row, scenarios, contract tests and code together, and Done when lists scenario titles.",
-      "files": ["evals/files/invoices-intent"],
+      "files": [
+        "evals/files/invoices-intent"
+      ],
       "assertions": [
         "A planning doc exists at docs/plans/YYYY-MM-DD-<slug>.md",
         "The plan notes that partial payments is a non-goal in src/billing/invoices/INTENT.md and that a layer must remove it from Non-goals with a new Decisions row",
+        "The plan flags that a fee on the unpaid balance conflicts with decision-3 (the flat 2500-cent fee) and says that decision must be superseded",
         "No layer is intent-only or test-only: each layer that changes invoice behavior includes the Decisions row, scenario, contract test and code",
         "Each behavior layer's Done when lists scenario titles; any existing scenario is quoted exactly as it appears in invoices.feature",
         "Layer 1 includes the planning doc and targets the trunk; every later layer's PR base is the previous layer's branch",
-        "The plan's Approach does not settle fee-on-balance behavior itself; it says those decisions go into INTENT.md Decisions rows",
+        "Behavior choices the request leaves open (the fee formula on a balance, when the balance is measured) appear as Open questions or proposed Decisions rows, never as settled facts in the Approach",
         "No file under src/ is changed"
       ]
     },
@@ -22,7 +25,9 @@
       "name": "plan-without-intent-docs",
       "prompt": "Break this into reviewable PRs before we start: add a monthly customer statement that lists each customer's invoices with any late fee as of the statement date.",
       "expected_output": "A planning doc with dependency-ordered layers, each green on its own, with stacked PR bases. Because the repo has no INTENT.md files, the plan does not introduce intent docs or scenarios.",
-      "files": ["evals/files/invoices-base"],
+      "files": [
+        "evals/files/invoices-base"
+      ],
       "assertions": [
         "A planning doc exists at docs/plans/YYYY-MM-DD-<slug>.md with one section per layer",
         "Layers are ordered by dependency and each has a one-line summary of what it delivers",

@@ -6,7 +6,9 @@
       "name": "write-from-code",
       "prompt": "The billing team keeps asking what our invoice late-fee rules actually are. Can you write intent docs for src/billing/invoices so the code could be regenerated from them?",
       "expected_output": "An INTENT.md and a .feature file in src/billing/invoices/, plus a contract test beside the directory that quotes every scenario title. The docs capture the existing behavior: positive whole-cent amounts, a 3-day grace period, a flat 2500-cent fee, paid invoices judged as of payment, and double payment refused.",
-      "files": ["evals/files/invoices-base"],
+      "files": [
+        "evals/files/invoices-base"
+      ],
       "assertions": [
         "`bash <skill-dir>/evals/check-intent-doc.sh src/billing/invoices <contract test files>`, run from the output repo, exits 0",
         "A contract test file exists outside src/billing/invoices/ and imports nothing from the unit except src/billing/invoices.js",
@@ -15,7 +17,8 @@
         "Scenarios state the flat 2500-cent fee, that paying on time never produces a fee later, and that paying twice fails with `AlreadyPaid`",
         "Scenario steps describe what a caller observes; no step names internal files, internal functions, or constants such as GRACE_DAYS",
         "The Public surface section names src/billing/invoices.js and describes each export",
-        "Purpose explains the problem in user terms and does not restate the scenarios"
+        "Purpose explains the problem in user terms and does not restate the scenarios",
+        "The contract tests fail when the implementation's grace period is changed to 4 days, and fail when the flat fee is changed to 2400 cents"
       ]
     },
     {
@@ -23,15 +26,18 @@
       "name": "change-behavior",
       "prompt": "Finance wants late fees to be 5% of the invoice amount instead of the flat $25, but never less than $10. Can you make that change?",
       "expected_output": "In one change: a new Decisions row for the percentage fee, scenarios tagged with it, contract tests quoting those scenarios that fail on the old code, and the code change. No scenario still asserts the flat fee.",
-      "files": ["evals/files/invoices-intent"],
+      "files": [
+        "evals/files/invoices-intent"
+      ],
       "assertions": [
         "INTENT.md has a new Decisions row with an id not used before (decision-6 or higher) recording the 5% fee with a 1000-cent minimum, a rejected alternative, and why",
-        "decision-3's id is not reused for the new rule",
+        "decision-3 stays in the Decisions table, marked `Superseded by decision-N.`, and is not reused for the new rule",
         "At least one scenario tagged with the new decision id shows a percentage fee with a concrete amount, and one shows the 1000-cent minimum applying",
         "No scenario still asserts a flat 2500-cent fee",
         "`bash <skill-dir>/evals/check-intent-doc.sh src/billing/invoices src/billing/invoices.contract.test.js`, run from the output repo, exits 0",
         "`npm test` passes",
-        "The new contract tests fail when src/billing/invoices/fees.js is replaced with the fixture's original version"
+        "The new contract tests fail when src/billing/invoices/fees.js is replaced with the fixture's original version",
+        "How fractional cents round is listed under Undecided or put to the user as a question, not written into the intent doc as settled policy"
       ]
     },
     {
@@ -39,11 +45,14 @@
       "name": "refactor-leaves-intent",
       "prompt": "fees.js in the invoices module is getting messy. Pull the days-late calculation out into its own file. Don't change any behavior.",
       "expected_output": "The days-late logic moves to a new disposable module. INTENT.md, the .feature file and the contract test are untouched, and all tests pass.",
-      "files": ["evals/files/invoices-intent"],
+      "files": [
+        "evals/files/invoices-intent"
+      ],
       "assertions": [
         "src/billing/invoices/INTENT.md is byte-identical to the fixture",
         "src/billing/invoices/invoices.feature is byte-identical to the fixture",
         "src/billing/invoices.contract.test.js is byte-identical to the fixture",
+        "src/billing/invoices.js is byte-identical to the fixture",
         "The days-late calculation lives in a new file under src/billing/invoices/",
         "`npm test` passes"
       ]
@@ -53,13 +62,33 @@
       "name": "no-bdd-framework",
       "prompt": "can we make the .feature files in src/billing/invoices actually run as tests? like wire them up so CI executes the scenarios",
       "expected_output": "The agent declines to add a BDD framework and explains that scenarios are a contract checked by contract tests in the repo's own runner, pointing to the coverage check. It may improve the contract tests, but adds no framework or step definitions.",
-      "files": ["evals/files/invoices-intent"],
+      "files": [
+        "evals/files/invoices-intent"
+      ],
       "assertions": [
         "package.json gains no BDD dependency (cucumber, @cucumber/*, jest-cucumber, or similar)",
-        "No step-definition files are created",
+        "No code parses .feature files into steps or maps Given/When/Then text to functions (a homegrown runner inside a test file counts)",
         "The response explains that the scenarios are checked by contract tests in the repo's normal test runner",
         "The response mentions the coverage check that every scenario title is quoted by a contract test",
         "`bash <skill-dir>/evals/check-intent-doc.sh src/billing/invoices src/billing/invoices.contract.test.js`, run from the output repo, exits 0"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "refactor-changes-surface",
+      "prompt": "Pull the days-late calculation in the invoices module out into its own file and export it from the module, the reporting team wants to reuse it. No behavior change, just a refactor.",
+      "expected_output": "Exporting daysLate adds to the unit's public surface, so it is a contract change, not a pure refactor. The agent says so, then in one change: updates INTENT.md's Public surface and adds a Decisions row, adds a scenario for the new export tagged with that decision, adds a contract test quoting it, and makes the code change.",
+      "files": [
+        "evals/files/invoices-intent"
+      ],
+      "assertions": [
+        "The response points out that exporting the function changes the public surface, so this is not a pure refactor",
+        "INTENT.md's Public surface section describes the new export",
+        "INTENT.md has a new Decisions row (decision-6 or higher) for exposing the calculation",
+        "A scenario tagged with that decision states what callers observe from the new export, with concrete dates",
+        "A contract test quotes that scenario's title and imports the export from src/billing/invoices.js",
+        "`bash <skill-dir>/evals/check-intent-doc.sh src/billing/invoices src/billing/invoices.contract.test.js`, run from the output repo, exits 0",
+        "`npm test` passes"
       ]
     }
   ]

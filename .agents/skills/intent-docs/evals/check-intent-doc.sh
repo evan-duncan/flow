@@ -33,9 +33,16 @@ grep -q '^[[:space:]]*```' "${intent}" && fail "INTENT.md contains a code block"
 
 # Decision ids: each one tags at least one scenario; no scenario tag points at a
 # missing decision.
-ids="$(grep -oE '\bdecision-[0-9]+\b' "${intent}" | sort -u)"
+# A row whose decision starts "Superseded by decision-N." tags no scenario.
+ids="$(grep -oE '^\|[[:space:]]*decision-[0-9]+[[:space:]]*\|' "${intent}" | grep -oE 'decision-[0-9]+' | sort -u)"
+superseded="$(grep -E '^\|[[:space:]]*decision-[0-9]+[[:space:]]*\|[[:space:]]*Superseded by decision-[0-9]+' "${intent}" \
+  | grep -oE '^\|[[:space:]]*decision-[0-9]+' | grep -oE 'decision-[0-9]+' || true)"
 [[ -n "${ids}" ]] || fail "Decisions table has no decision-<n> ids"
 for id in ${ids}; do
+  if grep -qxF "${id}" <<< "${superseded}"; then
+    grep -qE "@${id}\b" "${features[@]}" && fail "superseded ${id} still tags a scenario"
+    continue
+  fi
   grep -qE "@${id}\b" "${features[@]}" || fail "${id} tags no scenario"
 done
 for tag in $(grep -ohE '@decision-[0-9]+\b' "${features[@]}" | sort -u); do

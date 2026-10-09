@@ -128,6 +128,11 @@ Rules:
   in the layer that makes them. The plan's Approach links to those
   Decisions rows instead of restating them. The plan's own decisions are
   delivery choices only, such as why the cuts fall where they do.
+- **Leave open behavior open.** When the request doesn't settle a
+  behavior choice (a formula, a cutoff, an edge case), list it under Open
+  questions, or as a proposed Decisions row in the layer that will make
+  it. Never state it as settled in the Approach. The plan can recommend
+  an answer, but the user or the layer's intent edit decides it.
 - **Resolve open questions before their layer ships.** A plan Open
   question becomes one of two things: a Decisions row, or an **Undecided**
   entry if rebuilds may answer it either way. Don't leave it open in the

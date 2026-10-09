@@ -48,7 +48,10 @@ commits or PRs that ship separately:
 
 1. Edit `INTENT.md`. Add a row to **Decisions** that names the choice, the
    alternative you rejected, and why. A behavior change without a
-   decision row is incomplete.
+   decision row is incomplete. If the new decision replaces an earlier
+   one, keep the old row and start its decision text with
+   `Superseded by decision-N.` Don't edit the old row in place: its id is
+   the history of why the behavior changed.
 2. Add or edit the scenario that states the new behavior. Tag it with the
    decision's id.
 3. Add or update a contract test that quotes the scenario's title. Check
@@ -79,7 +82,8 @@ the change alters behavior.
 - Use `Scenario Outline` with an `Examples` table for edge cases and
   boundaries.
 - Tag each scenario that a decision drives with that decision's id
-  (`@decision-3`). Every decision has at least one tagged scenario.
+  (`@decision-3`). Every decision has at least one tagged scenario,
+  except superseded ones, which tag none.
 - Never assert anything listed under **Undecided**.
 - No step definitions, and never add a BDD framework (Cucumber, behave,
   SpecFlow, …) to run the scenarios. Gherkin is only the format of the
@@ -99,7 +103,8 @@ Sections, in order:
 3. **Public surface**: the public-surface file's path, what it exports,
    and what each export is for, in prose.
 4. **Decisions**: a table of id (`decision-1`, `decision-2`, …), decision,
-   rejected alternative, and why. Never reuse an id.
+   rejected alternative, and why. Never reuse an id. A replaced decision
+   stays in the table, marked `Superseded by decision-N.`
 5. **Undecided**: questions a rebuild may answer either way. Omit the
    section when it's empty.
 6. **Non-goals**.
