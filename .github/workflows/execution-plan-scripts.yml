@@ -3,11 +3,11 @@ name: execution-plan scripts
 on:
   push:
     paths:
-      - "skills/execution-plan/scripts/**"
+      - ".agents/skills/execution-plan/scripts/**"
       - ".github/workflows/execution-plan-scripts.yml"
   pull_request:
     paths:
-      - "skills/execution-plan/scripts/**"
+      - ".agents/skills/execution-plan/scripts/**"
       - ".github/workflows/execution-plan-scripts.yml"
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: shellcheck -S warning skills/execution-plan/scripts/*.sh skills/execution-plan/scripts/tests/*.sh
+      - run: shellcheck -S warning .agents/skills/execution-plan/scripts/*.sh .agents/skills/execution-plan/scripts/tests/*.sh
 
   test:
     strategy:
@@ -28,4 +28,4 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
-      - run: bash skills/execution-plan/scripts/tests/run-tests.sh -v
+      - run: bash .agents/skills/execution-plan/scripts/tests/run-tests.sh -v
